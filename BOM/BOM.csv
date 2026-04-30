@@ -1,0 +1,7 @@
+Designator,Qty,MPN,Description,Size
+D1;D2,2,BZT585B15T-7,Zener Diode,
+D3;D4,2,SMCJ43A,TVS Diode,
+H1,1,PZ254R-11-10P,Header,
+Q1;Q2,2,BSC025N08LS5ATMA1,MOSFET,
+R1;R3,2,47R,Resistor,0402
+R2;R4,2,47K,Resistor,0402
