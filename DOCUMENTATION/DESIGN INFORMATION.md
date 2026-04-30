@@ -1,6 +1,6 @@
 ## Why I Designed a MOSFET-Based QM1 / QM2 Replacement
 
-The original **STA460C** used in Honda OBD1 ECUs is an **NPN Darlington injector driver with a built-in avalanche diode**. It was designed to act as a low-side injector switch while also surviving the inductive kick generated when the injector is turned off. On paper, it is rated around **60 V**, **6 A continuous collector current**, **10 A pulse current**, and **200 mJ single-pulse avalanche energy**. :contentReference[oaicite:0]{index=0}
+The original **STA460C** used in Honda OBD1 ECUs is an **NPN Darlington injector driver with a built-in avalanche diode**. It was designed to act as a low-side injector switch while also surviving the inductive kick generated when the injector is turned off. On paper, it is rated around **60 V**, **6 A continuous collector current**, **10 A pulse current**, and **200 mJ single-pulse avalanche energy**.
 
 My goal with this project was not just to replace the package or make something that “sort of works.” The goal was to build a modern replacement that behaves like the original circuit where it matters, while using parts that are easier to source, more robust, and easier for people to understand and reproduce.
 
@@ -8,9 +8,9 @@ Instead of copying the original Darlington transistor approach, I chose to recre
 
 ## What I used and why
 
-At the heart of the design is the **BSC025N08LS5**. This is an **80 V logic-level N-channel MOSFET** with very low **RDS(on)**, strong pulse capability, and solid avalanche performance. Infineon specifies **80 V drain-source rating**, **370 mJ single-pulse avalanche energy**, and notes that the device is **100% avalanche tested**. :contentReference[oaicite:1]{index=1}
+At the heart of the design is the **BSC025N08LS5**. This is an **80 V logic-level N-channel MOSFET** with very low **RDS(on)**, strong pulse capability, and solid avalanche performance. It has an **80 V drain-source rating**, **370 mJ single-pulse avalanche energy**, and is listed as **100% avalanche tested**.
 
-That already gives this design more voltage and avalanche headroom than the original STA460C. The original part is a **60 V bipolar injector driver** with **200 mJ avalanche energy**, while the MOSFET I selected is an **80 V part** with a higher single-pulse avalanche rating. 
+That already gives this design more voltage and avalanche headroom than the original STA460C. The original part is a **60 V bipolar injector driver** with **200 mJ avalanche energy**, while the MOSFET I selected is an **80 V part** with a higher single-pulse avalanche rating.
 
 But the transistor alone is not what makes this work.
 
@@ -51,9 +51,9 @@ What matters most in this application is not whether the silicon inside is bipol
 
 That is exactly what this design does.
 
-The STA460C is a bipolar device, so when it is on, it operates with a **collector-emitter saturation voltage**. The datasheet shows about **0.09 V typical / 0.15 V max** at **1.5 A** with the stated base-drive condition. :contentReference[oaicite:3]{index=3}
+The STA460C is a bipolar device, so when it is on, it operates with a **collector-emitter saturation voltage**. The datasheet shows about **0.09 V typical / 0.15 V max** at **1.5 A** with the stated base-drive condition.
 
-The MOSFET works differently. Instead of a saturation voltage like a Darlington, it behaves more like a very small resistor when fully enhanced. The BSC025N08LS5 has an **RDS(on)** around **2.5 mΩ max at 10 V gate drive** and **3.3 mΩ max at 4.5 V**. :contentReference[oaicite:4]{index=4}
+The MOSFET works differently. Instead of a saturation voltage like a Darlington, it behaves more like a very small resistor when fully enhanced. The BSC025N08LS5 has an **RDS(on)** around **2.5 mΩ max at 10 V gate drive** and **3.3 mΩ max at 4.5 V**.
 
 That means the MOSFET replacement can switch injector current with extremely low on-state loss. In other words, less voltage wasted in the device and less heat generated in the switch itself.
 
@@ -71,7 +71,7 @@ If you clamp it at a controlled higher voltage, the current decays faster and th
 
 That is why the original STA460C includes avalanche behavior, and that is why I made the clamp network on this board a priority.
 
-The **SMCJ43A TVS** gives the injector energy a controlled place to go during turn-off. Instead of leaving the MOSFET to absorb everything uncontrolled, the external TVS defines the clamp behavior. The MOSFET itself is still avalanche-capable and rugged, but the design is not leaning on transistor breakdown alone as the primary strategy. 
+The **SMCJ43A TVS** gives the injector energy a controlled place to go during turn-off. Instead of leaving the MOSFET to absorb everything uncontrolled, the external TVS defines the clamp behavior. The MOSFET itself is still avalanche-capable and rugged, but the design is not leaning on transistor breakdown alone as the primary strategy.
 
 This is one of the places where I believe the design really shines.
 
@@ -117,13 +117,13 @@ The fact that the real injector-load scope captures line up so closely with the 
 
 There are a few areas where this design has clear advantages on paper.
 
-The original STA460C is rated around **60 V** collector-emitter and **200 mJ** single-pulse avalanche energy. :contentReference[oaicite:6]{index=6}
+The original STA460C is rated around **60 V** collector-emitter and **200 mJ** single-pulse avalanche energy.
 
-The BSC025N08LS5 is rated **80 V** drain-source and **370 mJ** single-pulse avalanche energy, and it is explicitly listed as avalanche-tested. :contentReference[oaicite:7]{index=7}
+The BSC025N08LS5 is rated **80 V** drain-source and **370 mJ** single-pulse avalanche energy, and it is explicitly listed as avalanche-tested.
 
-The MOSFET also has far greater current and power capability than what this application normally demands. That does not mean the finished board should be treated like a giant current switch just because the silicon is beefy. The board layout, copper, connector system, and real-world ECU environment still matter. But it does mean the transistor itself has a lot more breathing room than the original legacy part. 
+The MOSFET also has far greater current and power capability than what this application normally demands. That does not mean the finished board should be treated like a giant current switch just because the silicon is beefy. The board layout, copper, connector system, and real-world ECU environment still matter. But it does mean the transistor itself has a lot more breathing room than the original legacy part.
 
-The low **RDS(on)** is another major improvement. Lower switching loss means less heat and less wasted energy in the device during injector on-time. :contentReference[oaicite:9]{index=9}
+The low **RDS(on)** is another major improvement. Lower switching loss means less heat and less wasted energy in the device during injector on-time.
 
 The externalized clamp strategy is also a strength. Instead of relying entirely on the internal avalanche behavior of an older Darlington device, this design uses a dedicated TVS to help shape and control the energy release event.
 
